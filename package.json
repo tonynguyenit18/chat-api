@@ -1,0 +1,20 @@
+{
+  "name": "chatapi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "config": "^3.2.4",
+    "express": "^4.17.1",
+    "firebase-admin": "^8.7.0",
+    "mongoose": "^5.7.8",
+    "socket.io": "^2.3.0"
+  }
+}

@@ -1,0 +1,3 @@
+{
+    "mongoURI": "mongodb+srv://chatappdev:chatappdev123@cluster0-bugmy.azure.mongodb.net/test?retryWrites=true&w=majority"
+}
