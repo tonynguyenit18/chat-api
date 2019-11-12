@@ -33,6 +33,15 @@ const sendNotiToAll = async (sender, content, senderFcmToken) => {
                 icon: "icon",
             },
         },
+        apns: {
+            payload: {
+                aps: {
+                    sound: "sound",
+                    tag: "example",
+                    icon: "icon",
+                }
+            }
+        },
         priority: "high",
         tokens: fcmTokens
     }
