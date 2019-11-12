@@ -14,10 +14,10 @@ const sendNotiToAll = async (sender, content, senderFcmToken) => {
     }
     const fcmTokens = users.map(user => user.fcmToken).filter(token => token != senderFcmToken);
     const message = {
-        // notification: {
-        //     title: `New message from ${sender}`,
-        //     body: content
-        // },
+        notification: {
+            title: `New message from ${sender}`,
+            body: content
+        },
         data: {
             priority: "high",
             sound: "sound",
@@ -26,6 +26,14 @@ const sendNotiToAll = async (sender, content, senderFcmToken) => {
             title: `New message from ${sender}`,
             body: content,
         },
+        android: {
+            notification: {
+                sound: "sound",
+                tag: "example",
+                icon: "icon",
+            },
+        },
+        priority: "high",
         tokens: fcmTokens
     }
 
