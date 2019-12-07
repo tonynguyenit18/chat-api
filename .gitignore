@@ -1,1 +1,8 @@
-config/
+#dependencies
+/node_modules
+
+/config
+
+#misc
+.DS_Store
+.env

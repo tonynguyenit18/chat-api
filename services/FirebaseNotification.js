@@ -6,16 +6,18 @@ firebase.initializeApp({
     credential: firebase.credential.cert(serviceAccount),
     databaseURL: "https://chatapp-37d1c.firebaseio.com"
 });
-const sendNotiToAll = async (sender, content, senderFcmToken) => {
+const sendNotiToAll = async (sender, content, type, senderFcmToken) => {
     const users = await User.find();
     if (!users && users.length == 0) {
         console.log("Get user in notification failed")
         return
     }
+    const title = type === "text" ? `New message from ${sender}` : type === "location" ? `${sender} share location` : `${sender} share image`;
+    content = type === "location" ? `Locate ${sender}` : content
     const fcmTokens = users.map(user => user.fcmToken).filter(token => token != senderFcmToken);
     const message = {
         notification: {
-            title: `New message from ${sender}`,
+            title: title,
             body: content
         },
         data: {

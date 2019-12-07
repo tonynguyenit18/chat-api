@@ -2,6 +2,7 @@ var clients = [];
 const User = require("../models/User");
 const Message = require("../models/Message");
 const firebase = require("../services/FirebaseNotification");
+const S3UploadImage = require("../services/S3UploadImage")
 
 const chat = io => {
     io.on("connection", socket => {
@@ -12,17 +13,25 @@ const chat = io => {
         });
 
         socket.on("newMessage", async data => {
-            const { userId, content } = data;
+            let { userId, content, type } = data;
+            if (type === "image") {
+                const { base64, imgType } = data
+                console.log(base64, imgType)
+                const { Location } = await S3UploadImage.imageUpload(base64, imgType, userId);
+                content = Location
+                console.log(content)
+            }
             const _id = require("mongoose").Types.ObjectId(userId)
             const user = await User.findOne({ _id });
             const newMessage = new Message({
                 content,
-                user: _id
+                user: _id,
+                type
             })
 
             const addedMsg = await newMessage.save();
             console.log(user);
-            firebase.sendNotiToAll(user.userName, content, user.fcmToken)
+            firebase.sendNotiToAll(user.userName, content, type, user.fcmToken)
             io.sockets.emit("newMessage", { user, newMessage: addedMsg })
         })
 
