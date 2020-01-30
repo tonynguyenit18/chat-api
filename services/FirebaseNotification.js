@@ -14,7 +14,7 @@ const sendNotiToAll = async (sender, content, type, senderFcmToken) => {
     }
     const title = type === "text" ? `New message from ${sender}` : type === "location" ? `${sender} share location` : `${sender} share image`;
     content = type === "location" ? `Locate ${sender}` : content
-    const fcmTokens = users.map(user => user.fcmToken).filter(token => token != senderFcmToken);
+    const fcmTokens = users.filter(user => user.isLoggedIn).map(user => user.fcmToken).filter(token => token != senderFcmToken);
     const message = {
         notification: {
             title: title,
@@ -51,6 +51,10 @@ const sendNotiToAll = async (sender, content, type, senderFcmToken) => {
     firebase.messaging().sendMulticast(message)
         .then(response => {
             console.log("Send noti response: ", response)
+            const {responses} = response;
+            responses.forEach(res => {
+                console.log(res.error)
+            });
         }).catch((error) => {
             console.log('Error sending message:', error);
         });

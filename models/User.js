@@ -13,6 +13,10 @@ const UserSchema = new Schema({
     color: {
         type: String,
         required: true
+    },
+    isLoggedIn: {
+        type: Boolean,
+        required: true
     }
 }, {
     timestamps: true

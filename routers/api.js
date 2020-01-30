@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require("../models/User")
 const Message = require("../models/Message")
 const S3UploadImage = require("../services/S3UploadImage")
+const ObjectId = require("mongoose").Types.ObjectId
 
 router.post("/login", async (req, res) => {
     const { userName, fcmToken } = req.body;
@@ -18,11 +19,12 @@ router.post("/login", async (req, res) => {
             const newUser = new User({
                 userName,
                 fcmToken,
-                color
+                color,
+                isLoggedIn: true
             });
             user = await newUser.save();
         } else {
-            user = await User.findOneAndUpdate({ userName }, { fcmToken }, { new: true })
+            user = await User.findOneAndUpdate({ userName }, { fcmToken, isLoggedIn: true }, { new: true })
         }
         const messages = await Message.find();
         res.status(200).json({ user, messages, ok: true })
@@ -31,6 +33,17 @@ router.post("/login", async (req, res) => {
         console.log("Login error: ", err)
     }
 
+})
+
+router.post("/logout/:userId", async(req, res) =>{
+    const {userId} = req.params
+    try {
+        const response  = await User.findOneAndUpdate({_id: ObjectId(userId)}, {isLoggedIn: false}, {new: true})
+        console.log(response)
+        res.status(200).json({ok: true})
+    } catch (error) {
+        console.log("Login error: ", err)
+    }
 })
 
 router.get("/messages", async (req, res) => {
@@ -68,7 +81,7 @@ router.post("/image", async (req, res) => {
     const { base64, type, userId, imgType } = req.body;
     if (!base64) return;
     const { Location } = await S3UploadImage.imageUpload(base64, imgType, userId);
-    const _id = require("mongoose").Types.ObjectId(userId)
+    const _id = ObjectId(userId)
     const user = await User.findOne({ _id });
     const newMessage = new Message({
         content: Location,
